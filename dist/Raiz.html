@@ -4037,6 +4037,81 @@ ul {
   }
 }
 
+/* ---------- Voice picker ---------- */
+
+.voice-picker {
+  margin: 13px 0 12px;
+  padding: 11px 12px;
+  border: 1px solid rgba(94, 234, 212, 0.16);
+  border-radius: 13px;
+  background: rgba(94, 234, 212, 0.035);
+}
+
+.voice-picker__label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--cyan);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.voice-picker__row {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.voice-picker select {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel-solid);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.72rem;
+}
+
+.voice-picker select:focus {
+  outline: 2px solid rgba(94, 234, 212, 0.35);
+  outline-offset: 1px;
+}
+
+.voice-picker__empty {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.voice-help {
+  margin-top: 8px;
+  color: var(--dim);
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+.voice-help summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.voice-help p {
+  margin: 5px 0 0;
+}
+
+@media (max-width: 640px) {
+  .voice-picker__row {
+    flex-wrap: wrap;
+  }
+
+  .voice-picker select {
+    width: 100%;
+  }
+}
+
 
 /* ---------- Reto rápido ---------- */
 
@@ -7842,10 +7917,47 @@ ul {
   }
   var voices = [];
   var preferredVoice = null;
+  var VOICE_KEY = "raiz.voiceURI";
+  var FEMALE_NAMES = /(sabina|helena|laura|paulina|monica|mónica|dalia|elvira|marisol|sofia|sofía|carmen|lucia|lucía|isabel|valentina|renata|camila|gabriela|female|mujer|google español)/i;
+  var MALE_NAMES = /(pablo|raul|raúl|jorge|diego|enrique|carlos|miguel|pedro|juan|male|hombre)/i;
+  function voiceURI(v) {
+    return v?.voiceURI || v?.name || "";
+  }
+  function spanishVoice(v) {
+    return /^es([-_]|$)/i.test(v?.lang || "");
+  }
+  function voiceScore(v) {
+    const name = v?.name || "";
+    const lang = v?.lang || "";
+    let score = 0;
+    if (/^es/i.test(lang)) score += 100;
+    if (/es-MX/i.test(lang)) score += 50;
+    if (/es-US/i.test(lang)) score += 20;
+    if (FEMALE_NAMES.test(name)) score += 70;
+    if (/google español/i.test(name)) score += 20;
+    if (MALE_NAMES.test(name)) score -= 90;
+    if (/natural|neural/i.test(name)) score += 15;
+    if (v?.localService) score += 30;
+    if (v?.default) score += 5;
+    return score;
+  }
+  function sortVoices(list) {
+    return [...list].sort((a, b) => voiceScore(b) - voiceScore(a));
+  }
   function loadVoices() {
     if (!("speechSynthesis" in window)) return;
-    voices = window.speechSynthesis.getVoices();
-    preferredVoice = voices.find((v) => /es-MX/i.test(v.lang)) || voices.find((v) => /es-US/i.test(v.lang)) || voices.find((v) => /^es/i.test(v.lang)) || null;
+    const all = window.speechSynthesis.getVoices() || [];
+    voices = sortVoices(all.filter(spanishVoice));
+    let saved = "";
+    try {
+      saved = localStorage.getItem(VOICE_KEY) || "";
+    } catch {
+    }
+    const savedVoice = voices.find((v) => voiceURI(v) === saved);
+    const naturalFemale = voices.find(
+      (v) => /natural|neural/i.test(v.name) && FEMALE_NAMES.test(v.name)
+    );
+    preferredVoice = savedVoice || (navigator.onLine && naturalFemale ? naturalFemale : null) || voices[0] || null;
   }
   if ("speechSynthesis" in window) {
     loadVoices();
@@ -7854,14 +7966,35 @@ ul {
   function speechSupported() {
     return "speechSynthesis" in window;
   }
+  function getVoiceOptions() {
+    return voices.map((v) => ({
+      uri: voiceURI(v),
+      name: v.name,
+      lang: v.lang,
+      local: Boolean(v.localService)
+    }));
+  }
+  function getSelectedVoiceURI() {
+    return voiceURI(preferredVoice);
+  }
+  function setPreferredVoice(uri) {
+    const found = voices.find((v) => voiceURI(v) === uri);
+    if (!found) return;
+    preferredVoice = found;
+    try {
+      localStorage.setItem(VOICE_KEY, uri);
+    } catch {
+    }
+  }
   function speak(text, onState) {
     if (!speechSupported() || !text) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = preferredVoice?.lang || "es-MX";
-    if (preferredVoice) utter.voice = preferredVoice;
-    utter.rate = 0.95;
-    utter.pitch = 1.02;
+    const voice = preferredVoice || sortVoices((window.speechSynthesis.getVoices() || []).filter(spanishVoice))[0] || null;
+    utter.lang = voice?.lang || "es-MX";
+    if (voice) utter.voice = voice;
+    utter.rate = 0.92;
+    utter.pitch = 1.06;
     utter.volume = 1;
     utter.onstart = () => onState?.(true);
     utter.onend = () => onState?.(false);
@@ -7981,9 +8114,18 @@ ul {
     const eventHost = shellEl || root2;
     eventHost.addEventListener("click", onClick);
     eventHost.addEventListener("input", onInput);
+    const onVoices = () => {
+      if (session?.lesson && document.querySelector(".voice-picker")) renderCurrent();
+    };
+    if (speechSupported()) {
+      window.speechSynthesis.addEventListener?.("voiceschanged", onVoices);
+    }
     session.cleanup = () => {
       eventHost.removeEventListener("click", onClick);
       eventHost.removeEventListener("input", onInput);
+      if (speechSupported()) {
+        window.speechSynthesis.removeEventListener?.("voiceschanged", onVoices);
+      }
       stopSpeaking();
     };
     renderCurrent();
@@ -8076,6 +8218,56 @@ ul {
   function storyNarration(step) {
     return `${(step.paragraphs || []).join(" ")} ${step.question || ""}`.trim();
   }
+  function voiceHelp() {
+    return `<details class="voice-help">
+    <summary>\xBFC\xF3mo tener una voz m\xE1s natural?</summary>
+    <p><strong>Windows:</strong> Configuraci\xF3n \u2192 Hora e idioma \u2192 Voz \u2192 Agregar voces \u2192 Espa\xF1ol (M\xE9xico).</p>
+    <p><strong>Android:</strong> Ajustes \u2192 Texto a voz \u2192 Instalar datos de voz \u2192 Espa\xF1ol.</p>
+    <p><strong>Edge:</strong> las voces \u201CNatural\u201D suenan mejor; si no hay internet, Ra\xEDz usa la voz local.</p>
+  </details>`;
+  }
+  function voicePicker() {
+    if (!speechSupported()) return "";
+    const options = getVoiceOptions();
+    const selected = getSelectedVoiceURI();
+    if (!options.length) {
+      return `<div class="voice-picker"><span class="voice-picker__label">Voz de Luci</span><p class="voice-picker__empty">No hay voces en espa\xF1ol instaladas. Ra\xEDz usar\xE1 la voz del sistema si est\xE1 disponible.</p>${voiceHelp()}</div>`;
+    }
+    return `<div class="voice-picker">
+    <label class="voice-picker__label" for="voice-select">Voz de Luci</label>
+    <div class="voice-picker__row">
+      <select id="voice-select" aria-label="Elegir voz de lectura">
+        ${options.map(
+      (v) => `<option value="${escapeHTML(v.uri)}" ${v.uri === selected ? "selected" : ""}>${escapeHTML(v.name)} (${escapeHTML(v.lang)})${v.local ? " \xB7 local" : ""}</option>`
+    ).join("")}
+      </select>
+      <button class="btn btn--ghost btn--small" type="button" data-act="voice-preview">${icon("volume", 14)} Probar</button>
+    </div>
+    ${voiceHelp()}
+  </div>`;
+  }
+  function lessonNarration(lesson) {
+    const parts = [`Misi\xF3n: ${lesson.title}.`];
+    const intro3 = lesson.steps.find((s) => s.type === "intro");
+    if (intro3) parts.push(intro3.narration || intro3.text || "");
+    if (lesson.objective) parts.push(`Objetivo: ${lesson.objective}`);
+    if (lesson.keyIdeas?.length) {
+      const ideas = lesson.keyIdeas.map((idea) => idea.replace(/\.$/, "")).join(". ");
+      parts.push(`Ideas clave: ${ideas}.`);
+    }
+    lesson.steps.forEach((step, i) => {
+      if (step.type === "summary" || step.type === "intro") return;
+      if (step.type === "quiz") {
+        parts.push(`Paso ${i + 1}: ${step.title}. Responde tres preguntas con retroalimentaci\xF3n.`);
+        return;
+      }
+      const text = step.instruction || step.text || "";
+      if (text) parts.push(`Paso ${i + 1}: ${step.title}. ${text}`);
+    });
+    const last = lesson.steps[lesson.steps.length - 1];
+    if (last?.type === "summary" && last.text) parts.push(`Cierre: ${last.text}`);
+    return parts.join(" ");
+  }
   function narrationForStep(step) {
     if (!step) return "";
     if (step.type === "story") return storyNarration(step);
@@ -8084,7 +8276,7 @@ ul {
       if (!q) return "Reto completado.";
       return `${q.q} Opciones: ${q.options.join(", ")}.`;
     }
-    if (step.type === "intro") return step.narration || step.text || "";
+    if (step.type === "intro") return lessonNarration(session.lesson);
     if (step.type === "summary") return step.text || "";
     return step.instruction || step.text || step.title || "";
   }
@@ -8408,7 +8600,8 @@ ul {
       <h2 class="panel__title">${escapeHTML(step.title)}</h2>
       <p class="panel__text">${step.text}</p>
       <div class="panel__note"><strong>Objetivo:</strong> ${escapeHTML(lesson.objective)}</div>
-      ${speakButton(step.narration || step.text)}
+      ${voicePicker()}
+      ${speakButton(lessonNarration(lesson), "Escuchar misi\xF3n completa")}
       <div class="intro-list">
         ${lesson.keyIdeas.map((idea, i) => `<li><span class="intro-list__num">${i + 1}</span><span>${escapeHTML(idea)}</span></li>`).join("")}
       </div>
@@ -8438,6 +8631,7 @@ ul {
       <div class="story-text">
         ${step.paragraphs.map((p) => `<p>${escapeHTML(p)}</p>`).join("")}
       </div>
+      ${voicePicker()}
       ${speakButton(narration, "Escuchar el cuento")}
       <p class="story-question">${escapeHTML(step.question)}</p>
       <div class="story-options">${options}</div>
@@ -8671,6 +8865,10 @@ ul {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
+    if (act === "voice-preview") {
+      speak("Hola, soy Luci. As\xED se escucha la voz que elegiste para leer las misiones.");
+      return;
+    }
     if (act === "voice-auto") {
       if (!speechSupported()) {
         toast("Este dispositivo no tiene voz disponible.");
@@ -8695,7 +8893,7 @@ ul {
       return;
     }
     if (act === "speak") {
-      if (el.classList.contains("is-speaking")) {
+      if (el.classList.contains("is-speaking") || window.speechSynthesis?.speaking) {
         stopSpeaking();
         el.classList.remove("is-speaking");
         el.innerHTML = `${icon("volume", 14)} ${el.dataset.label || "Escuchar"}`;
@@ -9018,6 +9216,11 @@ ul {
   }
   function handleInput(e) {
     const id = e.target.id;
+    if (id === "voice-select") {
+      setPreferredVoice(e.target.value);
+      speak("Hola, soy Luci. As\xED se escucha la voz que elegiste para leer las misiones.");
+      return;
+    }
     if (id === "frac-num" || id === "frac-den") {
       if (id === "frac-num") {
         session.fractionNum = Number(e.target.value);

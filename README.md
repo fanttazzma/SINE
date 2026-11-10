@@ -10,7 +10,7 @@ Enciclopedia interactiva **offline** de primaria y secundaria, con contexto chia
 - **Modo cuento**: lee cada paso en voz alta y permite escuchar la historia completa.
 - Interacciones reales: recta numérica (incluye saltos de 3), fracciones con tortilla, balanza algebraica, plano cartesiano, laboratorio de fuerzas, células, plantas, cuerpo humano, ecosistemas, ciclo del agua, líneas del tiempo, clasificación, toma de decisiones, historias con voz y un laboratorio de código donde se programa a Luci por un tablero.
 - **Reto rápido**: 10 preguntas en 60 segundos, con puntos, racha y récord personal. Inspirado en Quiz Battle, pero 100 % offline.
-- **Voz**: lectura de cada misión con `SpeechSynthesis` del dispositivo (sin internet).
+- **Voz**: selección automática de una voz femenina en español (Sabina, Helena, Laura, Paulina…), selector de voz y lectura de la misión completa: descripción, objetivo, ideas clave y pasos. También funciona con `Modo cuento` paso a paso.
 - **Sonido** generado con Web Audio API (sin archivos externos).
 - **Progreso local**: XP, racha, misiones completadas, logros y cuaderno.
 - **100% offline**: sin backend, sin login, sin CDN, sin base de datos remota.

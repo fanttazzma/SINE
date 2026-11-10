@@ -22,6 +22,9 @@ import {
   playWrong,
   playComplete,
   playUnlock,
+  getVoiceOptions,
+  getSelectedVoiceURI,
+  setPreferredVoice,
 } from './audio.js';
 
 let session = null;
@@ -138,10 +141,19 @@ export function mountLesson(id) {
   const eventHost = shellEl || root;
   eventHost.addEventListener('click', onClick);
   eventHost.addEventListener('input', onInput);
+  const onVoices = () => {
+    if (session?.lesson && document.querySelector('.voice-picker')) renderCurrent();
+  };
+  if (speechSupported()) {
+    window.speechSynthesis.addEventListener?.('voiceschanged', onVoices);
+  }
 
   session.cleanup = () => {
     eventHost.removeEventListener('click', onClick);
     eventHost.removeEventListener('input', onInput);
+    if (speechSupported()) {
+      window.speechSynthesis.removeEventListener?.('voiceschanged', onVoices);
+    }
     stopSpeaking();
   };
 
@@ -245,6 +257,61 @@ function storyNarration(step) {
   return `${(step.paragraphs || []).join(' ')} ${step.question || ''}`.trim();
 }
 
+function voiceHelp() {
+  return `<details class="voice-help">
+    <summary>¿Cómo tener una voz más natural?</summary>
+    <p><strong>Windows:</strong> Configuración → Hora e idioma → Voz → Agregar voces → Español (México).</p>
+    <p><strong>Android:</strong> Ajustes → Texto a voz → Instalar datos de voz → Español.</p>
+    <p><strong>Edge:</strong> las voces “Natural” suenan mejor; si no hay internet, Raíz usa la voz local.</p>
+  </details>`;
+}
+
+function voicePicker() {
+  if (!speechSupported()) return '';
+  const options = getVoiceOptions();
+  const selected = getSelectedVoiceURI();
+  if (!options.length) {
+    return `<div class="voice-picker"><span class="voice-picker__label">Voz de Luci</span><p class="voice-picker__empty">No hay voces en español instaladas. Raíz usará la voz del sistema si está disponible.</p>${voiceHelp()}</div>`;
+  }
+  return `<div class="voice-picker">
+    <label class="voice-picker__label" for="voice-select">Voz de Luci</label>
+    <div class="voice-picker__row">
+      <select id="voice-select" aria-label="Elegir voz de lectura">
+        ${options
+          .map(
+            (v) => `<option value="${escapeHTML(v.uri)}" ${v.uri === selected ? 'selected' : ''}>${escapeHTML(v.name)} (${escapeHTML(v.lang)})${v.local ? ' · local' : ''}</option>`
+          )
+          .join('')}
+      </select>
+      <button class="btn btn--ghost btn--small" type="button" data-act="voice-preview">${icon('volume', 14)} Probar</button>
+    </div>
+    ${voiceHelp()}
+  </div>`;
+}
+
+function lessonNarration(lesson) {
+  const parts = [`Misión: ${lesson.title}.`];
+  const intro = lesson.steps.find((s) => s.type === 'intro');
+  if (intro) parts.push(intro.narration || intro.text || '');
+  if (lesson.objective) parts.push(`Objetivo: ${lesson.objective}`);
+  if (lesson.keyIdeas?.length) {
+    const ideas = lesson.keyIdeas.map((idea) => idea.replace(/\.$/, '')).join('. ');
+    parts.push(`Ideas clave: ${ideas}.`);
+  }
+  lesson.steps.forEach((step, i) => {
+    if (step.type === 'summary' || step.type === 'intro') return;
+    if (step.type === 'quiz') {
+      parts.push(`Paso ${i + 1}: ${step.title}. Responde tres preguntas con retroalimentación.`);
+      return;
+    }
+    const text = step.instruction || step.text || '';
+    if (text) parts.push(`Paso ${i + 1}: ${step.title}. ${text}`);
+  });
+  const last = lesson.steps[lesson.steps.length - 1];
+  if (last?.type === 'summary' && last.text) parts.push(`Cierre: ${last.text}`);
+  return parts.join(' ');
+}
+
 function narrationForStep(step) {
   if (!step) return '';
   if (step.type === 'story') return storyNarration(step);
@@ -253,7 +320,7 @@ function narrationForStep(step) {
     if (!q) return 'Reto completado.';
     return `${q.q} Opciones: ${q.options.join(', ')}.`;
   }
-  if (step.type === 'intro') return step.narration || step.text || '';
+  if (step.type === 'intro') return lessonNarration(session.lesson);
   if (step.type === 'summary') return step.text || '';
   return step.instruction || step.text || step.title || '';
 }
@@ -608,7 +675,8 @@ function panelFor(step) {
       <h2 class="panel__title">${escapeHTML(step.title)}</h2>
       <p class="panel__text">${step.text}</p>
       <div class="panel__note"><strong>Objetivo:</strong> ${escapeHTML(lesson.objective)}</div>
-      ${speakButton(step.narration || step.text)}
+      ${voicePicker()}
+      ${speakButton(lessonNarration(lesson), 'Escuchar misión completa')}
       <div class="intro-list">
         ${lesson.keyIdeas.map((idea, i) => `<li><span class="intro-list__num">${i + 1}</span><span>${escapeHTML(idea)}</span></li>`).join('')}
       </div>
@@ -642,6 +710,7 @@ function panelFor(step) {
       <div class="story-text">
         ${step.paragraphs.map((p) => `<p>${escapeHTML(p)}</p>`).join('')}
       </div>
+      ${voicePicker()}
       ${speakButton(narration, 'Escuchar el cuento')}
       <p class="story-question">${escapeHTML(step.question)}</p>
       <div class="story-options">${options}</div>
@@ -923,6 +992,11 @@ function handleClick(e) {
     return;
   }
 
+  if (act === 'voice-preview') {
+    speak('Hola, soy Luci. Así se escucha la voz que elegiste para leer las misiones.');
+    return;
+  }
+
   if (act === 'voice-auto') {
     if (!speechSupported()) {
       toast('Este dispositivo no tiene voz disponible.');
@@ -948,7 +1022,7 @@ function handleClick(e) {
   }
 
   if (act === 'speak') {
-    if (el.classList.contains('is-speaking')) {
+    if (el.classList.contains('is-speaking') || window.speechSynthesis?.speaking) {
       stopSpeaking();
       el.classList.remove('is-speaking');
       el.innerHTML = `${icon('volume', 14)} ${el.dataset.label || 'Escuchar'}`;
@@ -1297,6 +1371,11 @@ function finishCode(step, token) {
 
 function handleInput(e) {
   const id = e.target.id;
+  if (id === 'voice-select') {
+    setPreferredVoice(e.target.value);
+    speak('Hola, soy Luci. Así se escucha la voz que elegiste para leer las misiones.');
+    return;
+  }
   if (id === 'frac-num' || id === 'frac-den') {
     if (id === 'frac-num') {
       session.fractionNum = Number(e.target.value);

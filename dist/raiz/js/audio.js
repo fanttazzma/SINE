@@ -65,14 +65,58 @@ export function toggleMute() {
 
 let voices = [];
 let preferredVoice = null;
+const VOICE_KEY = 'raiz.voiceURI';
+
+const FEMALE_NAMES =
+  /(sabina|helena|laura|paulina|monica|mónica|dalia|elvira|marisol|sofia|sofía|carmen|lucia|lucía|isabel|valentina|renata|camila|gabriela|female|mujer|google español)/i;
+const MALE_NAMES = /(pablo|raul|raúl|jorge|diego|enrique|carlos|miguel|pedro|juan|male|hombre)/i;
+
+function voiceURI(v) {
+  return v?.voiceURI || v?.name || '';
+}
+
+function spanishVoice(v) {
+  return /^es([-_]|$)/i.test(v?.lang || '');
+}
+
+function voiceScore(v) {
+  const name = v?.name || '';
+  const lang = v?.lang || '';
+  let score = 0;
+  if (/^es/i.test(lang)) score += 100;
+  if (/es-MX/i.test(lang)) score += 50;
+  if (/es-US/i.test(lang)) score += 20;
+  if (FEMALE_NAMES.test(name)) score += 70;
+  if (/google español/i.test(name)) score += 20;
+  if (MALE_NAMES.test(name)) score -= 90;
+  if (/natural|neural/i.test(name)) score += 15;
+  if (v?.localService) score += 30;
+  if (v?.default) score += 5;
+  return score;
+}
+
+function sortVoices(list) {
+  return [...list].sort((a, b) => voiceScore(b) - voiceScore(a));
+}
 
 function loadVoices() {
   if (!('speechSynthesis' in window)) return;
-  voices = window.speechSynthesis.getVoices();
+  const all = window.speechSynthesis.getVoices() || [];
+  voices = sortVoices(all.filter(spanishVoice));
+  let saved = '';
+  try {
+    saved = localStorage.getItem(VOICE_KEY) || '';
+  } catch {
+    // Sin almacenamiento: se elige la mejor voz disponible.
+  }
+  const savedVoice = voices.find((v) => voiceURI(v) === saved);
+  const naturalFemale = voices.find(
+    (v) => /natural|neural/i.test(v.name) && FEMALE_NAMES.test(v.name)
+  );
   preferredVoice =
-    voices.find((v) => /es-MX/i.test(v.lang)) ||
-    voices.find((v) => /es-US/i.test(v.lang)) ||
-    voices.find((v) => /^es/i.test(v.lang)) ||
+    savedVoice ||
+    (navigator.onLine && naturalFemale ? naturalFemale : null) ||
+    voices[0] ||
     null;
 }
 
@@ -85,14 +129,39 @@ export function speechSupported() {
   return 'speechSynthesis' in window;
 }
 
+export function getVoiceOptions() {
+  return voices.map((v) => ({
+    uri: voiceURI(v),
+    name: v.name,
+    lang: v.lang,
+    local: Boolean(v.localService),
+  }));
+}
+
+export function getSelectedVoiceURI() {
+  return voiceURI(preferredVoice);
+}
+
+export function setPreferredVoice(uri) {
+  const found = voices.find((v) => voiceURI(v) === uri);
+  if (!found) return;
+  preferredVoice = found;
+  try {
+    localStorage.setItem(VOICE_KEY, uri);
+  } catch {
+    // Sin almacenamiento: se mantiene en memoria.
+  }
+}
+
 export function speak(text, onState) {
   if (!speechSupported() || !text) return;
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = preferredVoice?.lang || 'es-MX';
-  if (preferredVoice) utter.voice = preferredVoice;
-  utter.rate = 0.95;
-  utter.pitch = 1.02;
+  const voice = preferredVoice || sortVoices((window.speechSynthesis.getVoices() || []).filter(spanishVoice))[0] || null;
+  utter.lang = voice?.lang || 'es-MX';
+  if (voice) utter.voice = voice;
+  utter.rate = 0.92;
+  utter.pitch = 1.06;
   utter.volume = 1;
   utter.onstart = () => onState?.(true);
   utter.onend = () => onState?.(false);

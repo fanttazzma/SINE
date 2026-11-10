@@ -16,7 +16,8 @@ Raíz es una **enciclopedia interactiva offline** de primaria y secundaria.
 - **Modo cuento:** voz que lee la historia y acompaña cada paso.
 - **Reto rápido:** 10 preguntas en 60 segundos, con racha y récord personal.
 - Cada misión: explicación breve, interacción y reto con retroalimentación.
-- Voz, sonido, progreso local, racha y logros.
+- Voz femenina en español, con selección de voz y lectura de la misión completa: objetivo, ideas y pasos.
+- Sonido, progreso local, racha y logros.
 - 100 % offline: sin backend, sin login, sin CDN.
 - Se instala como app en Android, iPhone, Windows, macOS y Linux.
 

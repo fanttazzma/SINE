@@ -1,4 +1,4 @@
-const CACHE = 'raiz-v8';
+const CACHE = 'raiz-v9';
 const ASSETS = [
   './',
   './index.html',
