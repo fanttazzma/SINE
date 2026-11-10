@@ -126,7 +126,13 @@ if ('speechSynthesis' in window) {
 }
 
 export function speechSupported() {
-  return 'speechSynthesis' in window;
+  return Boolean(window.NativeTts) || 'speechSynthesis' in window;
+}
+
+function nativeTts() {
+  return window.NativeTts && typeof window.NativeTts.speak === 'function'
+    ? window.NativeTts
+    : null;
 }
 
 export function getVoiceOptions() {
@@ -155,6 +161,18 @@ export function setPreferredVoice(uri) {
 
 export function speak(text, onState) {
   if (!speechSupported() || !text) return;
+  const native = nativeTts();
+  if (native) {
+    window.__raizTtsDone = () => onState?.(false);
+    try {
+      native.stop?.();
+      native.speak(text);
+      onState?.(true);
+    } catch {
+      onState?.(false);
+    }
+    return;
+  }
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   const voice = preferredVoice || sortVoices((window.speechSynthesis.getVoices() || []).filter(spanishVoice))[0] || null;
@@ -170,5 +188,13 @@ export function speak(text, onState) {
 }
 
 export function stopSpeaking() {
+  if (nativeTts()) {
+    try {
+      window.NativeTts.stop?.();
+    } catch {
+      // La app nativa puede estar cerrándose.
+    }
+    return;
+  }
   if (speechSupported()) window.speechSynthesis.cancel();
 }

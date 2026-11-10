@@ -268,6 +268,14 @@ function voiceHelp() {
 
 function voicePicker() {
   if (!speechSupported()) return '';
+  if (window.NativeTts) {
+    return `<div class="voice-picker">
+      <span class="voice-picker__label">Voz de Luci</span>
+      <p class="voice-picker__empty">Voz del sistema Android · español (México). Puedes cambiarla en Ajustes → Texto a voz.</p>
+      <div class="voice-picker__row"><button class="btn btn--ghost btn--small" type="button" data-act="voice-preview">${icon('volume', 14)} Probar</button></div>
+      ${voiceHelp()}
+    </div>`;
+  }
   const options = getVoiceOptions();
   const selected = getSelectedVoiceURI();
   if (!options.length) {
@@ -1022,18 +1030,22 @@ function handleClick(e) {
   }
 
   if (act === 'speak') {
+    const iconOnly = el.id === 'lesson-speak';
+    const idleLabel = iconOnly ? '' : ` ${el.dataset.label || 'Escuchar'}`;
+    const idleIcon = iconOnly ? icon('volume', 18) : icon('volume', 14);
+    const playIcon = iconOnly ? icon('pause', 18) : icon('pause', 14);
     if (el.classList.contains('is-speaking') || window.speechSynthesis?.speaking) {
       stopSpeaking();
       el.classList.remove('is-speaking');
-      el.innerHTML = `${icon('volume', 14)} ${el.dataset.label || 'Escuchar'}`;
+      el.innerHTML = `${idleIcon}${idleLabel}`;
     } else {
       const text = el.dataset.speak || currentStep()?.narration || currentStep()?.text || '';
       el.classList.add('is-speaking');
-      el.innerHTML = `${icon('pause', 14)} Detener`;
+      el.innerHTML = `${playIcon}${iconOnly ? '' : ' Detener'}`;
       speak(text, (on) => {
         if (!on) {
           el.classList.remove('is-speaking');
-          el.innerHTML = `${icon('volume', 14)} ${el.dataset.label || 'Escuchar'}`;
+          el.innerHTML = `${idleIcon}${idleLabel}`;
         }
       });
     }

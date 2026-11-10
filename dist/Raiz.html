@@ -4672,6 +4672,25 @@ ul {
     </noscript>
 
     <script>
+/* Ajustes específicos cuando Raíz corre dentro del APK de Android/Capacitor. */
+(function () {
+  const cap = window.Capacitor;
+  if (!cap) return;
+
+  const App = cap.Plugins && cap.Plugins.App;
+  if (!App || typeof App.addListener !== 'function') return;
+
+  App.addListener('backButton', ({ canGoBack }) => {
+    if (canGoBack) {
+      window.history.back();
+    } else if (typeof App.exitApp === 'function') {
+      App.exitApp();
+    }
+  });
+})();
+
+  </script>
+    <script>
 (() => {
   // ../Raiz/data/primary.js
   var PRIMARY_GRADES = [
@@ -7964,7 +7983,10 @@ ul {
     window.speechSynthesis.addEventListener?.("voiceschanged", loadVoices);
   }
   function speechSupported() {
-    return "speechSynthesis" in window;
+    return Boolean(window.NativeTts) || "speechSynthesis" in window;
+  }
+  function nativeTts() {
+    return window.NativeTts && typeof window.NativeTts.speak === "function" ? window.NativeTts : null;
   }
   function getVoiceOptions() {
     return voices.map((v) => ({
@@ -7988,6 +8010,18 @@ ul {
   }
   function speak(text, onState) {
     if (!speechSupported() || !text) return;
+    const native = nativeTts();
+    if (native) {
+      window.__raizTtsDone = () => onState?.(false);
+      try {
+        native.stop?.();
+        native.speak(text);
+        onState?.(true);
+      } catch {
+        onState?.(false);
+      }
+      return;
+    }
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     const voice = preferredVoice || sortVoices((window.speechSynthesis.getVoices() || []).filter(spanishVoice))[0] || null;
@@ -8002,6 +8036,13 @@ ul {
     window.speechSynthesis.speak(utter);
   }
   function stopSpeaking() {
+    if (nativeTts()) {
+      try {
+        window.NativeTts.stop?.();
+      } catch {
+      }
+      return;
+    }
     if (speechSupported()) window.speechSynthesis.cancel();
   }
 
@@ -8228,6 +8269,14 @@ ul {
   }
   function voicePicker() {
     if (!speechSupported()) return "";
+    if (window.NativeTts) {
+      return `<div class="voice-picker">
+      <span class="voice-picker__label">Voz de Luci</span>
+      <p class="voice-picker__empty">Voz del sistema Android \xB7 espa\xF1ol (M\xE9xico). Puedes cambiarla en Ajustes \u2192 Texto a voz.</p>
+      <div class="voice-picker__row"><button class="btn btn--ghost btn--small" type="button" data-act="voice-preview">${icon("volume", 14)} Probar</button></div>
+      ${voiceHelp()}
+    </div>`;
+    }
     const options = getVoiceOptions();
     const selected = getSelectedVoiceURI();
     if (!options.length) {
@@ -8893,18 +8942,22 @@ ul {
       return;
     }
     if (act === "speak") {
+      const iconOnly = el.id === "lesson-speak";
+      const idleLabel = iconOnly ? "" : ` ${el.dataset.label || "Escuchar"}`;
+      const idleIcon = iconOnly ? icon("volume", 18) : icon("volume", 14);
+      const playIcon = iconOnly ? icon("pause", 18) : icon("pause", 14);
       if (el.classList.contains("is-speaking") || window.speechSynthesis?.speaking) {
         stopSpeaking();
         el.classList.remove("is-speaking");
-        el.innerHTML = `${icon("volume", 14)} ${el.dataset.label || "Escuchar"}`;
+        el.innerHTML = `${idleIcon}${idleLabel}`;
       } else {
         const text = el.dataset.speak || currentStep()?.narration || currentStep()?.text || "";
         el.classList.add("is-speaking");
-        el.innerHTML = `${icon("pause", 14)} Detener`;
+        el.innerHTML = `${playIcon}${iconOnly ? "" : " Detener"}`;
         speak(text, (on) => {
           if (!on) {
             el.classList.remove("is-speaking");
-            el.innerHTML = `${icon("volume", 14)} ${el.dataset.label || "Escuchar"}`;
+            el.innerHTML = `${idleIcon}${idleLabel}`;
           }
         });
       }
@@ -10232,7 +10285,7 @@ ul {
   touchVisit();
   initStars();
   render();
-  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http") && !window.Capacitor) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("sw.js").catch(() => {
       });

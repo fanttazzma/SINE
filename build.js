@@ -56,6 +56,7 @@ css = css
   );
 
 let html = read('index.html');
+const nativeJs = read('js/native.js');
 html = html
   .replace(/\s*<link rel="manifest"[^>]*>/, '')
   .replace(/\s*<link rel="apple-touch-icon"[^>]*>/, '')
@@ -66,6 +67,10 @@ html = html
     `href="${dataUri('icons/logo.svg', 'image/svg+xml')}"`
   )
   .replace('</head>', `  <style>\n${css}\n  </style>\n  </head>`)
+  .replace(
+    '<script src="js/native.js"></script>',
+    `<script>\n${nativeJs}\n  </script>`
+  )
   .replace(
     /<script type="module" src="js\/app\.js"><\/script>/,
     `<script>\n${bundle}\n  </script>`

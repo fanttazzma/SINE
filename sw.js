@@ -1,4 +1,4 @@
-const CACHE = 'raiz-v9';
+const CACHE = 'raiz-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -16,6 +16,7 @@ const ASSETS = [
   './js/app.js',
   './js/challenge.js',
   './js/lesson.js',
+  './js/native.js',
   './js/store.js',
   './js/ui.js',
   './js/audio.js',
