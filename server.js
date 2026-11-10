@@ -73,7 +73,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log('');
-  console.log('  Raíz · Aprende sin señal');
+  console.log('  SINE · Aprende sin señal');
   console.log(`  http://localhost:${PORT}`);
   console.log(`  http://127.0.0.1:${PORT}`);
   console.log('');

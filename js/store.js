@@ -1,6 +1,8 @@
 import { LESSONS, GRADES, SUBJECTS } from '../data/curriculum.js';
 
-const KEY = 'raiz.progress.v1';
+const KEY = 'sine.progress.v1';
+// Clave anterior (cuando la app se llamaba Raíz): se migra para no perder el progreso.
+const LEGACY_KEY = 'raiz.progress.v1';
 const DAY = 24 * 60 * 60 * 1000;
 
 const defaultState = () => ({
@@ -24,7 +26,7 @@ let state = load();
 
 function load() {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY);
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw);
     return { ...defaultState(), ...parsed, completed: parsed.completed || {}, scores: parsed.scores || {}, badges: parsed.badges || [] };
@@ -149,7 +151,7 @@ export const BADGES = [
   },
   {
     id: 'raiz-completa',
-    name: 'Raíz completa',
+    name: 'Nivelación completa',
     desc: 'Completa las cuarenta y dos misiones.',
     icon: 'crown',
     check: (s) => Object.keys(s.completed).length >= LESSONS.length,

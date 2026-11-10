@@ -1,8 +1,8 @@
 {
-  "name": "raiz",
+  "name": "sine",
   "version": "1.1.0",
   "private": true,
-  "description": "Raíz: enciclopedia interactiva offline de primaria y secundaria, con contexto chiapaneco.",
+  "description": "SINE (Sistema Integral de Nivelación Educativa): enciclopedia interactiva offline de primaria y secundaria, con contexto chiapaneco.",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",

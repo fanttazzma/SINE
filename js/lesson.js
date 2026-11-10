@@ -9,6 +9,7 @@ import {
 import {
   icon,
   sceneSVG,
+  tint,
   escapeHTML,
   toast,
   confetti,
@@ -45,7 +46,7 @@ export function renderLessonPage(id) {
   const s = subjectMeta(lesson);
   const g = gradeMeta(lesson);
   const done = isLessonDone(lesson.id);
-  return `<div class="lesson-shell" style="--c1:${s.color};--c2:${s.color2}">
+  return `<div class="lesson-shell" style="--c1:${s.color};--c2:${s.color2};--c1-lt:${tint(s.color, 0.5)};--c2-lt:${tint(s.color2, 0.5)}">
     <div class="lesson-top">
       <div class="lesson-top__left">
         <a class="lesson-back" href="#/grado/${g.id}/${lesson.subject}" aria-label="Volver a ${escapeHTML(s.name)}">${icon('arrowLeft', 18)}</a>
@@ -315,7 +316,7 @@ function numberlineStage(step) {
     const tall = Math.round((v - min) / stepSize) % 2 === 0;
     ticks += `<path d="M${x} 100V${tall ? 112 : 106}" stroke="rgba(255,255,255,${tall ? 0.35 : 0.16})" stroke-width="1.5"/>`;
     if (tall) {
-      ticks += `<text x="${x}" y="140" fill="${v === 0 ? '#5eead4' : 'rgba(255,255,255,.5)'}" font-size="15" text-anchor="middle" font-family="Inter, sans-serif">${v}</text>`;
+      ticks += `<text x="${x}" y="140" fill="${v === 0 ? '#e6d194' : 'rgba(255,255,255,.5)'}" font-size="15" text-anchor="middle" font-family="Noto Sans, sans-serif">${v}</text>`;
     }
   }
   const x = xFor(session.nlValue);
@@ -328,10 +329,10 @@ function numberlineStage(step) {
         <path d="M40 100l10-5v10l-10-5Z" fill="rgba(255,255,255,.35)"/>
         ${ticks}
         <g id="nl-marker" transform="translate(${x},100)">
-          <circle r="18" fill="rgba(94,234,212,.1)"/>
-          <circle r="7" fill="#5eead4"/>
-          <path d="M0 12v22" stroke="#5eead4" stroke-width="2" stroke-dasharray="3 4"/>
-          <text y="52" fill="#5eead4" font-size="16" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">${session.nlValue}</text>
+          <circle r="18" fill="rgba(230,209,148,.1)"/>
+          <circle r="7" fill="#e6d194"/>
+          <path d="M0 12v22" stroke="#e6d194" stroke-width="2" stroke-dasharray="3 4"/>
+          <text y="52" fill="#e6d194" font-size="16" text-anchor="middle" font-family="Patria, serif" font-weight="700">${session.nlValue}</text>
         </g>
       </svg>
       <div class="numberline__readout" id="nl-readout">${session.nlValue}<small>${escapeHTML(step.unit || '')}</small></div>
@@ -359,7 +360,7 @@ function fractionStage(step) {
     const y1 = cy + r * Math.sin(a1);
     const large = a1 - a0 > Math.PI ? 1 : 0;
     const d = `M${cx} ${cy} L${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`;
-    slices += `<path class="fraction-slice" data-slice="${i}" d="${d}" fill="${i < num ? 'rgba(94,234,212,.78)' : 'rgba(255,255,255,.055)'}" stroke="rgba(7,10,24,.9)" stroke-width="3"/>`;
+    slices += `<path class="fraction-slice" data-slice="${i}" d="${d}" fill="${i < num ? 'rgba(230,209,148,.78)' : 'rgba(255,255,255,.055)'}" stroke="rgba(0,36,31,.9)" stroke-width="3"/>`;
   }
   const pct = Math.round((num / den) * 100);
   return `<div class="stage__badge">${icon('sigma', 12)} Fracciones</div>
@@ -381,7 +382,7 @@ function storyStage(step) {
   return `<div class="stage__glow"></div>
     <div class="stage__scene">${sceneSVG(scene, s.color, s.color2)}</div>
     <div class="stage__badge">${icon('book', 12)} Cuento interactivo</div>
-    <div class="story-waves" style="--c1:${s.color}" aria-hidden="true">
+    <div class="story-waves" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span>
     </div>
     <div class="stage__hint">Escucha la historia y elige con atención.</div>`;
@@ -438,18 +439,18 @@ function balanceStage(step) {
     <div class="balance" style="padding:0 20px">
       <svg viewBox="0 0 600 380" aria-label="Balanza que representa ${step.a}x + ${step.b} = ${step.c}">
         <path d="M300 150v160M220 320h160" stroke="rgba(255,255,255,.25)" stroke-width="8" stroke-linecap="round"/>
-        <circle cx="300" cy="150" r="10" fill="#5eead4"/>
+        <circle cx="300" cy="150" r="10" fill="#e6d194"/>
         <g id="balance-beam" transform="rotate(${angle} 300 150)">
           <path d="M150 150h300" stroke="url(#b-beam)" stroke-width="5" stroke-linecap="round"/>
           <path d="M150 150v36M450 150v36" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
-          <path d="M100 186h100l-15 26h-70Z" fill="#0d1730" stroke="rgba(255,255,255,.18)"/>
-          <path d="M400 186h100l-15 26h-70Z" fill="#0d1730" stroke="rgba(255,255,255,.18)"/>
-          <text x="150" y="205" fill="#9aa5c9" font-size="12" text-anchor="middle" font-family="Inter, sans-serif">${step.a}x + ${step.b}</text>
-          <text x="450" y="205" fill="#9aa5c9" font-size="12" text-anchor="middle" font-family="Inter, sans-serif">${step.c}</text>
+          <path d="M100 186h100l-15 26h-70Z" fill="#0d302b" stroke="rgba(255,255,255,.18)"/>
+          <path d="M400 186h100l-15 26h-70Z" fill="#0d302b" stroke="rgba(255,255,255,.18)"/>
+          <text x="150" y="205" fill="#c9d6d2" font-size="12" text-anchor="middle" font-family="Noto Sans, sans-serif">${step.a}x + ${step.b}</text>
+          <text x="450" y="205" fill="#c9d6d2" font-size="12" text-anchor="middle" font-family="Noto Sans, sans-serif">${step.c}</text>
         </g>
         <defs>
           <linearGradient id="b-beam" x1="150" y1="150" x2="450" y2="150" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#5eead4"/><stop offset="1" stop-color="#8b5cf6"/>
+            <stop stop-color="#e6d194"/><stop offset="1" stop-color="#b08ab3"/>
           </linearGradient>
         </defs>
       </svg>
@@ -473,15 +474,15 @@ function graphStage(step) {
   for (let i = 0; i <= 5; i++) {
     const x = 70 + (i / 5) * 460;
     const y = 55 + (i / 5) * 285;
-    grid += `<path d="M${x} 55v285" stroke="rgba(148,163,184,.16)"/><path d="M70 ${y}h460" stroke="rgba(148,163,184,.16)"/>`;
+    grid += `<path d="M${x} 55v285" stroke="rgba(201,214,210,.16)"/><path d="M70 ${y}h460" stroke="rgba(201,214,210,.16)"/>`;
   }
   let labels = '';
   for (let i = 0; i <= 4; i++) {
     const yVal = (yMax / 4) * i;
-    labels += `<text x="62" y="${py(yVal) + 3}" fill="rgba(255,255,255,.38)" font-size="9" text-anchor="end" font-family="Inter, sans-serif">${Math.round(yVal)}</text>`;
+    labels += `<text x="62" y="${py(yVal) + 3}" fill="rgba(255,255,255,.38)" font-size="9" text-anchor="end" font-family="Noto Sans, sans-serif">${Math.round(yVal)}</text>`;
   }
   for (let xVal = 0; xVal <= xMax; xVal += 2) {
-    labels += `<text x="${px(xVal)}" y="356" fill="rgba(255,255,255,.38)" font-size="9" text-anchor="middle" font-family="Inter, sans-serif">${xVal}</text>`;
+    labels += `<text x="${px(xVal)}" y="356" fill="rgba(255,255,255,.38)" font-size="9" text-anchor="middle" font-family="Noto Sans, sans-serif">${xVal}</text>`;
   }
   return `<div class="stage__badge">${icon('sigma', 12)} Plano cartesiano</div>
     <div class="sim-stage">
@@ -490,8 +491,8 @@ function graphStage(step) {
         ${grid}
         ${labels}
         <path d="M70 340V55M70 340h460" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-        <path id="graph-line" d="M${px(x1)} ${py(y1)} L${px(x2)} ${py(y2)}" stroke="#5eead4" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="${px(x1)}" cy="${py(y1)}" r="5" fill="#bef264"/>
+        <path id="graph-line" d="M${px(x1)} ${py(y1)} L${px(x2)} ${py(y2)}" stroke="#e6d194" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="${px(x1)}" cy="${py(y1)}" r="5" fill="#9fd3b8"/>
         <text x="540" y="360" fill="rgba(255,255,255,.4)" font-size="11" text-anchor="end">x</text>
         <text x="58" y="62" fill="rgba(255,255,255,.4)" font-size="11" text-anchor="end">y</text>
       </svg>
@@ -509,19 +510,19 @@ function forceStage(step) {
     <div class="sim-stage">
     <div class="force" style="padding:0 20px">
       <svg viewBox="0 0 600 390" aria-label="Carreta en una rampa con fuerza aplicada">
-        <path d="M70 330 470 210l60 22-400 120Z" fill="#0c1428" stroke="rgba(255,255,255,.12)"/>
-        <path d="M70 330 470 210" stroke="rgba(94,234,212,.65)" stroke-width="3"/>
+        <path d="M70 330 470 210l60 22-400 120Z" fill="#0c2824" stroke="rgba(255,255,255,.12)"/>
+        <path d="M70 330 470 210" stroke="rgba(230,209,148,.65)" stroke-width="3"/>
         <g id="force-cart" transform="translate(300 198) rotate(-17.5)">
-          <rect x="0" y="0" width="94" height="56" rx="10" fill="#13233f" stroke="rgba(94,234,212,.4)"/>
-          <circle cx="20" cy="64" r="12" fill="#0a1024" stroke="#5eead4" stroke-width="3"/>
-          <circle cx="74" cy="64" r="12" fill="#0a1024" stroke="#5eead4" stroke-width="3"/>
-          <path d="M20 28h54M32 16v24" stroke="rgba(94,234,212,.4)" stroke-width="2"/>
+          <rect x="0" y="0" width="94" height="56" rx="10" fill="#133f39" stroke="rgba(230,209,148,.4)"/>
+          <circle cx="20" cy="64" r="12" fill="#0a2421" stroke="#e6d194" stroke-width="3"/>
+          <circle cx="74" cy="64" r="12" fill="#0a2421" stroke="#e6d194" stroke-width="3"/>
+          <path d="M20 28h54M32 16v24" stroke="rgba(230,209,148,.4)" stroke-width="2"/>
         </g>
-        <g id="force-arrow" stroke="#bef264" stroke-width="4" stroke-linecap="round">
+        <g id="force-arrow" stroke="#9fd3b8" stroke-width="4" stroke-linecap="round">
           <path d="M120 250h${arrow}"/>
           <path d="M${120 + arrow - 12} 242l12 8-12 8"/>
         </g>
-        <text x="120" y="230" fill="#bef264" font-size="12" font-family="Inter, sans-serif">F = ${force} N</text>
+        <text x="120" y="230" fill="#9fd3b8" font-size="12" font-family="Noto Sans, sans-serif">F = ${force} N</text>
       </svg>
       <div class="force__readout">
         <div class="force__stat"><b id="force-a">${accel.toFixed(1)}</b><span>m/s²</span></div>

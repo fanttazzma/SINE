@@ -1,14 +1,14 @@
-# Raíz · Pitch de 3 minutos
+# SINE · Pitch de 3 minutos
 
 ## 1. El problema (30 s)
 
 En muchas comunidades de Chiapas, la escuela convive con internet intermitente, grupos multigrado y materiales que no siempre hablan del territorio donde viven los estudiantes. La tecnología educativa suele asumir conexión permanente, cuentas en la nube y video pesado.
 
-**Raíz** parte de lo contrario: aprender debe funcionar **sin señal**, en una laptop o tablet, y con ejemplos de Chiapas.
+El **SINE** (Sistema Integral de Nivelación Educativa) parte de lo contrario: aprender debe funcionar **sin señal**, en una laptop o tablet, y con ejemplos de Chiapas.
 
 ## 2. La solución (45 s)
 
-Raíz es una **enciclopedia interactiva offline** de primaria y secundaria.
+El SINE es una **enciclopedia interactiva offline** de primaria y secundaria.
 
 - 9 grados: 1º a 6º de primaria y 1º a 3º de secundaria.
 - 6 materias: Matemáticas, Ciencias Naturales, Lengua y Literatura, Historia, Geografía y Programación.
@@ -24,7 +24,7 @@ No es un curso en video. Es un **laboratorio para tocar el concepto**: una torti
 
 ## 3. Demo (60 s)
 
-1. Abrimos Raíz en la laptop.
+1. Abrimos el SINE en la laptop.
 2. **Desconectamos el Wi-Fi** frente al jurado.
 3. Entramos a **1º de primaria → Lengua → La palabra que se perdió**.
 4. Activamos **Modo cuento**: la voz narra la historia; elegimos la palabra amable.
@@ -85,4 +85,4 @@ El software no resuelve la energía, pero el bajo consumo y el tamaño reducido 
 No hay cuentas ni servidores. El progreso vive en `localStorage` del dispositivo. No se recopilan datos personales.
 
 **¿Qué los hace diferentes de una enciclopedia?**
-Una enciclopedia se lee; Raíz se manipula. Cada misión termina con una decisión, un reto o una simulación, no solo con texto.
+Una enciclopedia se lee; el SINE se manipula. Cada misión termina con una decisión, un reto o una simulación, no solo con texto.

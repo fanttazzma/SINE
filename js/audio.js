@@ -1,5 +1,5 @@
 let audioCtx = null;
-let muted = localStorage.getItem('raiz.muted') === '1';
+let muted = (localStorage.getItem('sine.muted') ?? localStorage.getItem('raiz.muted')) === '1';
 
 function ensureCtx() {
   if (!audioCtx) {
@@ -58,7 +58,7 @@ export function isMuted() {
 
 export function toggleMute() {
   muted = !muted;
-  localStorage.setItem('raiz.muted', muted ? '1' : '0');
+  localStorage.setItem('sine.muted', muted ? '1' : '0');
   if (!muted) playClick();
   return muted;
 }

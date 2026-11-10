@@ -2,6 +2,6 @@
 set -e
 cd "$(dirname "$0")"
 npm run build
-rm -f dist/Raiz-offline.zip
-(cd dist && zip -qr Raiz-offline.zip raiz)
-echo "Listo: dist/Raiz.html y dist/Raiz-offline.zip"
+rm -f dist/SINE-offline.zip
+(cd dist && zip -qr SINE-offline.zip sine)
+echo "Listo: dist/SINE.html y dist/SINE-offline.zip"

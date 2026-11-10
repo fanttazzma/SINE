@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 npm run build
-$zip = Join-Path $PSScriptRoot 'dist\Raiz-offline.zip'
+$zip = Join-Path $PSScriptRoot 'dist\SINE-offline.zip'
 if (Test-Path $zip) { Remove-Item $zip -Force }
-Compress-Archive -Path (Join-Path $PSScriptRoot 'dist\raiz\*') -DestinationPath $zip -CompressionLevel Optimal
-Write-Host "Listo: dist\Raiz.html y dist\Raiz-offline.zip"
+Compress-Archive -Path (Join-Path $PSScriptRoot 'dist\sine\*') -DestinationPath $zip -CompressionLevel Optimal
+Write-Host "Listo: dist\SINE.html y dist\SINE-offline.zip"

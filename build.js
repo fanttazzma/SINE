@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Genera dos artefactos de distribución:
- *   dist/Raiz.html     → un solo archivo, se abre con doble clic
- *   dist/raiz/         → carpeta portable para servir o publicar
+ *   dist/SINE.html     → un solo archivo, se abre con doble clic
+ *   dist/sine/         → carpeta portable para servir o publicar
  *
  * Requiere esbuild solo para construir el HTML único:
  *   npm install
@@ -13,7 +13,7 @@ const path = require('node:path');
 
 const root = __dirname;
 const dist = path.join(root, 'dist');
-const portable = path.join(dist, 'raiz');
+const portable = path.join(dist, 'sine');
 
 function read(p) {
   return fs.readFileSync(path.join(root, p), 'utf8');
@@ -45,15 +45,12 @@ const bundle = esbuild.buildSync({
 
 let css = ['css/base.css', 'css/app.css', 'css/lesson.css', 'css/challenge.css'].map(read).join('\n\n');
 
-css = css
-  .replace(
-    "url('../assets/fonts/Inter.woff2')",
-    `url('${dataUri('assets/fonts/Inter.woff2', 'font/woff2')}')`
-  )
-  .replace(
-    "url('../assets/fonts/SpaceGrotesk.woff2')",
-    `url('${dataUri('assets/fonts/SpaceGrotesk.woff2', 'font/woff2')}')`
+for (const font of ['Patria.woff2', 'NotoSans-Regular.woff2', 'NotoSans-Bold.woff2']) {
+  css = css.replace(
+    `url('../assets/fonts/${font}')`,
+    `url('${dataUri(`assets/fonts/${font}`, 'font/woff2')}')`
   );
+}
 
 let html = read('index.html');
 html = html
@@ -68,11 +65,12 @@ html = html
   .replace('</head>', `  <style>\n${css}\n  </style>\n  </head>`)
   .replace(
     /<script type="module" src="js\/app\.js"><\/script>/,
-    `<script>\n${bundle}\n  </script>`
+    // Función de reemplazo: evita que los "$" del bundle se interpreten como patrones.
+    () => `<script>\n${bundle.replace(/(["'])icons\/sine-logo\.svg\1/g, `"${dataUri('icons/sine-logo.svg', 'image/svg+xml')}"`)}\n  </script>`
   );
 
-fs.writeFileSync(path.join(dist, 'Raiz.html'), html, 'utf8');
-fs.copyFileSync(path.join(dist, 'Raiz.html'), path.join(portable, 'Raiz.html'));
+fs.writeFileSync(path.join(dist, 'SINE.html'), html, 'utf8');
+fs.copyFileSync(path.join(dist, 'SINE.html'), path.join(portable, 'SINE.html'));
 
 const items = [
   'index.html',
@@ -99,13 +97,13 @@ fs.writeFileSync(path.join(portable, '.nojekyll'), '');
 fs.writeFileSync(
   path.join(portable, 'LEEME.txt'),
   [
-    'Raíz · Aprende sin señal',
+    'SINE · Sistema Integral de Nivelación Educativa',
     '',
     'Windows: doble clic en start.bat',
     'macOS/Linux: chmod +x start.sh && ./start.sh',
     'Navegador: http://localhost:4173',
     '',
-    'Sin servidor: abre Raiz.html (funciona con doble clic).',
+    'Sin servidor: abre SINE.html (funciona con doble clic).',
     'No abras index.html directamente: el navegador bloquea los módulos en file://.',
     'Para publicar en GitHub Pages/Netlify, sube esta carpeta.',
     '',
@@ -114,5 +112,5 @@ fs.writeFileSync(
 );
 
 console.log('Listo:');
-console.log('  dist/Raiz.html   (archivo único, offline)');
-console.log('  dist/raiz/       (carpeta portable/PWA)');
+console.log('  dist/SINE.html   (archivo único, offline)');
+console.log('  dist/sine/       (carpeta portable/PWA)');

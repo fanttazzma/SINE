@@ -18,7 +18,7 @@ import {
 } from './store.js';
 import {
   icon,
-  logoMark,
+  brandLogo,
   mascotSVG,
   subjectIcon,
   sceneSVG,
@@ -45,7 +45,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
 window.addEventListener('appinstalled', () => {
   deferredInstallPrompt = null;
-  toast('Raíz quedó instalada en este dispositivo');
+  toast('SINE quedó instalado en este dispositivo');
 });
 
 function parseRoute() {
@@ -73,12 +73,8 @@ function renderNav(route) {
   const activeNotebook = route.name === 'notebook';
   const activeAchievements = route.name === 'achievements';
   return `<nav class="nav" aria-label="Navegación principal">
-    <a class="brand" href="#/" aria-label="Raíz, inicio">
-      ${logoMark(38)}
-      <span>
-        <span class="brand__name">Raíz</span>
-        <span class="brand__tag">Aprende sin señal</span>
-      </span>
+    <a class="brand" href="#/" aria-label="SINE, inicio">
+      ${brandLogo()}
     </a>
     <div class="nav__links">
       ${navLink('#/', 'Inicio', activeHome)}
@@ -89,7 +85,7 @@ function renderNav(route) {
     <div class="nav__spacer"></div>
     <div class="nav__right">
       <span class="chip chip--grade"><span class="chip__dot"></span> 9 grados</span>
-      <button class="icon-btn" data-action="install" aria-label="Instalar o descargar Raíz" title="Instalar app">
+      <button class="icon-btn" data-action="install" aria-label="Instalar o descargar el SINE" title="Instalar app">
         ${icon('download')}
       </button>
       <button class="icon-btn" data-action="sound" aria-label="${isMuted() ? 'Activar sonido' : 'Silenciar'}" title="${isMuted() ? 'Activar sonido' : 'Silenciar'}">
@@ -104,13 +100,13 @@ function renderFooter() {
   return `<footer class="footer">
     <div class="wrap footer__inner">
       <div class="footer__brand">
-        ${logoMark(30)}
-        <span><strong style="color:var(--text)">Raíz</strong> · Enciclopedia viva de Chiapas</span>
+        ${brandLogo('footer__logo')}
+        <span>Enciclopedia viva de Chiapas</span>
       </div>
       <p class="footer__note">
         Prototipo educativo offline para primaria y secundaria. Contenido alineado al Plan de Estudios 2022 de la SEP.
         No sustituye a los libros de texto ni la guía docente. Hecho con orgullo en Chiapas.
-        <button class="link-arrow" data-action="about" style="border:0;background:none;padding:0;margin-top:8px;cursor:pointer">Acerca de Raíz ${icon('arrowRight', 14)}</button>
+        <button class="link-arrow" data-action="about" style="border:0;background:none;padding:0;margin-top:8px;cursor:pointer">Acerca del SINE ${icon('arrowRight', 14)}</button>
       </p>
     </div>
   </footer>`;
@@ -199,10 +195,10 @@ function homeView() {
           <div class="orb__ring"></div>
           <div class="orb__glow"></div>
           <div class="orb__mascot">${mascotSVG()}</div>
-          <div class="orbit-chip orbit-chip--1" style="color:#67e8f9">${icon('sigma', 16)} Matemáticas</div>
-          <div class="orbit-chip orbit-chip--2" style="color:#bef264">${icon('flask', 16)} Ciencias</div>
-          <div class="orbit-chip orbit-chip--3" style="color:#fbbf24">${icon('column', 16)} Historia</div>
-          <div class="orbit-chip orbit-chip--4" style="color:#fb7185">${icon('book', 16)} Lengua</div>
+          <div class="orbit-chip orbit-chip--1" style="color:#1e5b4f">${icon('sigma', 16)} Matemáticas</div>
+          <div class="orbit-chip orbit-chip--2" style="color:#4a7c3a">${icon('flask', 16)} Ciencias</div>
+          <div class="orbit-chip orbit-chip--3" style="color:#8a6a24">${icon('column', 16)} Historia</div>
+          <div class="orbit-chip orbit-chip--4" style="color:#9b2247">${icon('book', 16)} Lengua</div>
         </div>
       </div>
     </section>
@@ -529,7 +525,7 @@ function notebookView() {
         <div class="badges">
           ${badges.slice(0, 6).join('')}
         </div>
-        <div style="margin-top:16px;padding:14px;border:1px solid rgba(94,234,212,.16);border-radius:14px;background:rgba(94,234,212,.045)">
+        <div style="margin-top:16px;padding:14px;border:1px solid rgba(var(--cyan-rgb),.16);border-radius:14px;background:rgba(var(--cyan-rgb),.045)">
           <div style="font-size:.72rem;font-weight:700;color:var(--cyan);display:flex;gap:7px;align-items:center">${icon('sparkles', 14)} Luci dice</div>
           <p style="margin-top:5px;color:var(--muted);font-size:.74rem;line-height:1.55">Completa una misión de cada materia y la constancia de explorador será tuya. No hay prisa: aprender es un camino, no una carrera.</p>
         </div>
@@ -545,7 +541,7 @@ function notebookView() {
       </div>
       <div class="lesson-list">
         ${LESSONS.filter((l) => !isLessonDone(l.id)).slice(0, 4).map((l, idx) => lessonRow(l, idx + 1)).join('') ||
-          `<div class="empty">¡Completaste todas las misiones! Eres oficialmente un explorador de Raíz.</div>`}
+          `<div class="empty">¡Completaste todas las misiones! Eres oficialmente un explorador del SINE.</div>`}
       </div>
     </section>`;
 }
@@ -564,13 +560,13 @@ function achievementsView() {
   const user = getState();
   const total = getTotalProgress();
   return `<div class="crumbs"><a href="#/">Inicio</a>${icon('chevronRight')}<span>Logros</span></div>
-    <section class="grade-hero" data-big="" style="--c1:#fbbf24;--c2:#fb7185">
+    <section class="grade-hero" data-big="" style="--c1:#a57f2c;--c2:#9b2247">
       <div>
         <div class="grade-hero__label">Colección de logros</div>
         <h1 class="grade-hero__title">Cada misión deja huella</h1>
         <p class="grade-hero__desc">Has completado ${total.done} de ${total.total} misiones. Los logros se desbloquean solos y viven en tu cuaderno local.</p>
       </div>
-      <div class="progress-ring" style="--value:${total.pct};--c1:#fbbf24">
+      <div class="progress-ring" style="--value:${total.pct};--c1:#a57f2c">
         <div class="progress-ring__text"><div class="progress-ring__num">${total.pct}%</div><div class="progress-ring__label">avance</div></div>
       </div>
     </section>
@@ -640,7 +636,7 @@ function resetModal() {
 function installModal() {
   if (window.matchMedia?.('(display-mode: standalone)').matches) {
     openModal({
-      title: 'Raíz ya está instalada',
+      title: 'SINE ya está instalado',
       body: `<p class="modal__text">Estás usando la versión instalada. Puedes abrirla desde tu pantalla de inicio o menú de aplicaciones, incluso sin internet.</p>`,
       actions: [{ label: 'Genial', className: 'btn--primary' }],
     });
@@ -649,8 +645,8 @@ function installModal() {
 
   if (deferredInstallPrompt) {
     openModal({
-      title: 'Instalar Raíz',
-      body: `<p class="modal__text">Raíz se instalará como una app en este dispositivo. Después podrás abrirla sin conexión, como cualquier otra aplicación.</p>
+      title: 'Instalar SINE',
+      body: `<p class="modal__text">El SINE se instalará como una app en este dispositivo. Después podrás abrirla sin conexión, como cualquier otra aplicación.</p>
         <div class="panel__note" style="margin-top:14px"><strong>Ocupa muy poco:</strong> contenido, voz y progreso viven en tu dispositivo.</div>`,
       actions: [
         { label: 'Ahora no', className: 'btn--ghost' },
@@ -674,13 +670,13 @@ function installModal() {
   }
 
   openModal({
-    title: 'Lleva Raíz contigo',
+    title: 'Lleva el SINE contigo',
     body: `<p class="modal__text">Puedes instalarla como app o copiar la carpeta para usarla sin internet.</p>
       <div class="install-steps">
         <div><b>Android / Chrome</b><span>Menú ⋮ → “Instalar aplicación” o “Agregar a pantalla principal”.</span></div>
         <div><b>iPhone / iPad</b><span>Compartir → “Agregar a inicio”.</span></div>
         <div><b>Windows / Mac</b><span>Icono de instalar en la barra de direcciones, o abre <code>start.bat</code> / <code>start.sh</code>.</span></div>
-        <div><b>Sin instalación</b><span>Descomprime <code>Raiz-offline.zip</code> y abre <code>index.html</code> o el servidor local.</span></div>
+        <div><b>Sin instalación</b><span>Descomprime <code>SINE-offline.zip</code> y abre <code>index.html</code> o el servidor local.</span></div>
       </div>
       <p class="modal__text" style="margin-top:14px"><strong>Para distribuir:</strong> comparte la carpeta <code>dist/</code>, el ZIP portable o publica la carpeta en GitHub Pages/Netlify. Todo funciona sin backend.</p>`,
     actions: [{ label: 'Entendido', className: 'btn--primary' }],
@@ -689,8 +685,8 @@ function installModal() {
 
 function aboutModal() {
   openModal({
-    title: 'Acerca de Raíz',
-    body: `<p class="modal__text"><strong>Raíz</strong> es un prototipo de enciclopedia interactiva offline para secundaria. Cada misión combina una explicación breve, una interacción y un reto con retroalimentación.</p>
+    title: 'Acerca del SINE',
+    body: `<p class="modal__text"><strong>SINE</strong> (Sistema Integral de Nivelación Educativa) es un prototipo de enciclopedia interactiva offline para secundaria. Cada misión combina una explicación breve, una interacción y un reto con retroalimentación.</p>
       <p class="modal__text" style="margin-top:12px">Está inspirado en las enciclopedias interactivas de los 90, pero diseñado para tres realidades de Chiapas: conectividad intermitente, escuelas multigrado y diversidad cultural.</p>
       <div class="panel__note" style="margin-top:16px"><strong>Contenido:</strong> alineación conceptual al Plan de Estudios 2022 de la SEP, con ejemplos de Chiapas. Es un demo: antes de usarlo en aula debe revisarse con docentes y contrastarse con los libros de texto oficiales.</div>
       <p class="modal__text" style="margin-top:12px"><strong>Fuentes recomendadas para la siguiente iteración:</strong> SEP (planes y programas), INEGI (censo y territorio), CONEVAL (pobreza), INPI (pueblos indígenas) y Secretaría de Salud de Chiapas.</p>
@@ -784,18 +780,18 @@ function render() {
   if (route.name !== 'lesson') window.scrollTo(0, 0);
   document.title =
     route.name === 'home'
-      ? 'Raíz · Aprende sin señal'
+      ? 'SINE · Aprende sin señal'
       : route.name === 'lesson'
-        ? `${getLesson(route.id)?.title || 'Misión'} · Raíz`
+        ? `${getLesson(route.id)?.title || 'Misión'} · SINE`
         : route.name === 'grade'
-          ? `${GRADES.find((g) => g.id === route.gradeId)?.name || 'Grado'} · Raíz`
+          ? `${GRADES.find((g) => g.id === route.gradeId)?.name || 'Grado'} · SINE`
           : route.name === 'subject'
-            ? `${SUBJECTS[route.subject]?.name || 'Materia'} · Raíz`
+            ? `${SUBJECTS[route.subject]?.name || 'Materia'} · SINE`
             : route.name === 'challenge'
-              ? 'Reto rápido · Raíz'
+              ? 'Reto rápido · SINE'
               : route.name === 'notebook'
-                ? 'Mi cuaderno · Raíz'
-                : 'Logros · Raíz';
+                ? 'Mi cuaderno · SINE'
+                : 'Logros · SINE';
 }
 
 /* ---------- Boot ---------- */

@@ -1,6 +1,6 @@
 {
-  "name": "Raíz · Aprende sin señal",
-  "short_name": "Raíz",
+  "name": "SINE · Sistema Integral de Nivelación Educativa",
+  "short_name": "SINE",
   "description": "Enciclopedia interactiva offline de primaria y secundaria: matemáticas, ciencias, lengua, historia, geografía, programación e historias con voz.",
   "lang": "es-MX",
   "dir": "ltr",
@@ -8,8 +8,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#05060f",
-  "theme_color": "#05060f",
+  "background_color": "#fbf9f4",
+  "theme_color": "#611232",
   "categories": ["education", "books", "kids"],
   "icons": [
     {

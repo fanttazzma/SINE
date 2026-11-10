@@ -1,4 +1,4 @@
-# Raíz · Aprende sin señal
+# SINE · Sistema Integral de Nivelación Educativa
 
 Enciclopedia interactiva **offline** de primaria y secundaria, con contexto chiapaneco. Hecha como prototipo para concurso de programación.
 
@@ -47,7 +47,7 @@ Para instalar la app, usa el botón de descarga de la barra superior o consulta 
 ## Estructura
 
 ```text
-Raiz/
+SINE/
   index.html
   server.js
   sw.js
@@ -89,8 +89,9 @@ Primaria trabaja Matemáticas, Lengua y Ciencias; secundaria suma Historia, Geog
 
 ## Créditos
 
-- Diseño y desarrollo: prototipo Raíz.
-- Tipografías: Inter y Space Grotesk (SIL Open Font License), empaquetadas localmente.
+- Diseño y desarrollo: prototipo SINE.
+- Identidad gráfica: Guía de Identidad Gráfica del Gobierno de México 2024-2030 (paleta guinda, verde y dorado).
+- Tipografías: Patria (títulos) y Noto Sans (cuerpo, SIL Open Font License), empaquetadas localmente en WOFF2.
 - Ilustraciones: SVG originales generados para este prototipo.
 - Contexto: Chiapas, México.
 
@@ -100,4 +101,4 @@ Primaria trabaja Matemáticas, Lengua y Ciencias; secundaria suma Historia, Geog
 - Más misiones por grado y materia; Historia/Geografía para 4º–6º de primaria.
 - Versión en tseltal/tsotsil con hablantes nativos.
 - Modo docente con reportes de grupo.
-- Empaquetado nativo con Tauri v2 para Windows/Android, reutilizando `dist/raiz/`.
+- Empaquetado nativo con Tauri v2 para Windows/Android, reutilizando `dist/sine/`.
