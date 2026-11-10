@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Raíz · Aprende sin señal</title>
+    <meta
+      name="description"
+      content="Raíz es una enciclopedia interactiva offline de primaria y secundaria: matemáticas, ciencias, lengua, historia, geografía, programación e historias con voz."
+    />
+    <meta name="theme-color" content="#05060f" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <link rel="preload" href="assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/SpaceGrotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/lesson.css" />
+    <link rel="stylesheet" href="css/challenge.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Saltar al contenido</a>
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+    <div id="app">
+      <div style="min-height:100vh;display:grid;place-items:center">
+        <div style="text-align:center">
+          <div
+            style="width:54px;height:54px;margin:0 auto 14px;border-radius:50%;border:2px solid rgba(94,234,212,.2);border-top-color:#5eead4;animation:spin-slow 1s linear infinite"
+          ></div>
+          <p style="color:#9aa5c9;font-size:13px;letter-spacing:.12em;text-transform:uppercase">Cargando Raíz</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-root"></div>
+    <div id="toast-root" aria-live="polite"></div>
+    <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+    <noscript>
+      <div style="padding:40px;color:#fff;background:#05060f;min-height:100vh">
+        Raíz necesita JavaScript para funcionar. Actívalo y recarga la página.
+      </div>
+    </noscript>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
