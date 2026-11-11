@@ -8158,13 +8158,13 @@ ul {
     const onVoices = () => {
       if (session?.lesson && document.querySelector(".voice-picker")) renderCurrent();
     };
-    if (speechSupported()) {
+    if (speechSupported() && window.speechSynthesis) {
       window.speechSynthesis.addEventListener?.("voiceschanged", onVoices);
     }
     session.cleanup = () => {
       eventHost.removeEventListener("click", onClick);
       eventHost.removeEventListener("input", onInput);
-      if (speechSupported()) {
+      if (window.speechSynthesis) {
         window.speechSynthesis.removeEventListener?.("voiceschanged", onVoices);
       }
       stopSpeaking();
