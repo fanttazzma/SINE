@@ -7,8 +7,8 @@ export const PRIMARY_GRADES = [
     name: 'Primero de primaria',
     tagline: 'Juega y descubre',
     description: 'Sumas pequeñas, vocales, seres vivos y el mundo que te rodea.',
-    color: '#fbbf24',
-    color2: '#fb7185',
+    color: '#a57f2c',
+    color2: '#9b2247',
   },
   {
     id: 'p2',
@@ -18,8 +18,8 @@ export const PRIMARY_GRADES = [
     name: 'Segundo de primaria',
     tagline: 'Aprende con cuentos',
     description: 'Sumas y restas, partes del cuento, plantas y la escuela.',
-    color: '#fb923c',
-    color2: '#f43f5e',
+    color: '#b8643a',
+    color2: '#9b2247',
   },
   {
     id: 'p3',
@@ -29,8 +29,8 @@ export const PRIMARY_GRADES = [
     name: 'Tercero de primaria',
     tagline: 'Multiplica ideas',
     description: 'Multiplicación, fábulas, cuerpo humano y trabajo en equipo.',
-    color: '#34d399',
-    color2: '#14b8a6',
+    color: '#1e5b4f',
+    color2: '#4a7c3a',
   },
   {
     id: 'p4',
@@ -40,8 +40,8 @@ export const PRIMARY_GRADES = [
     name: 'Cuarto de primaria',
     tagline: 'Explora Chiapas',
     description: 'Fracciones, leyendas, ecosistemas y la riqueza de tu estado.',
-    color: '#38bdf8',
-    color2: '#6366f1',
+    color: '#2f5d7c',
+    color2: '#1e5b4f',
   },
   {
     id: 'p5',
@@ -51,8 +51,8 @@ export const PRIMARY_GRADES = [
     name: 'Quinto de primaria',
     tagline: 'Piensa con datos',
     description: 'Porcentajes, hechos y opiniones, el agua y el territorio.',
-    color: '#a78bfa',
-    color2: '#8b5cf6',
+    color: '#5b3a5e',
+    color2: '#611232',
   },
   {
     id: 'p6',
@@ -62,8 +62,8 @@ export const PRIMARY_GRADES = [
     name: 'Sexto de primaria',
     tagline: 'Listo para secundaria',
     description: 'Ecuaciones, figuras literarias, energía y materia.',
-    color: '#f472b6',
-    color2: '#c026d3',
+    color: '#9b2247',
+    color2: '#611232',
   },
 ];
 

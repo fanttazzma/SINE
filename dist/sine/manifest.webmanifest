@@ -1,0 +1,46 @@
+{
+  "name": "SINE · Sistema Integral de Nivelación Educativa",
+  "short_name": "SINE",
+  "description": "Enciclopedia interactiva offline de primaria y secundaria: matemáticas, ciencias, lengua, historia, geografía, programación e historias con voz.",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf9f4",
+  "theme_color": "#611232",
+  "categories": ["education", "books", "kids"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "1º de secundaria",
+      "url": "./#/grado/1",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mi cuaderno",
+      "url": "./#/cuaderno",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

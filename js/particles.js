@@ -1,3 +1,5 @@
+const PALETTE = ['165, 127, 44', '165, 127, 44', '155, 34, 71', '30, 91, 79'];
+
 export function initStars() {
   const canvas = document.getElementById('stars');
   if (!canvas) return;
@@ -27,6 +29,8 @@ export function initStars() {
       vy: (Math.random() - 0.5) * 0.1,
       a: Math.random() * 0.45 + 0.1,
       tw: Math.random() * Math.PI * 2,
+      // Constelación institucional: dorado, guinda y verde sobre fondo claro.
+      c: PALETTE[Math.floor(Math.random() * PALETTE.length)],
     }));
   }
 
@@ -42,7 +46,7 @@ export function initStars() {
       const alpha = reduce ? p.a : p.a * (0.72 + Math.sin(t / 1600 + p.tw) * 0.28);
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(206, 224, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(${p.c}, ${alpha})`;
       ctx.fill();
     }
 
@@ -59,7 +63,7 @@ export function initStars() {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(126, 231, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(165, 127, 44, ${alpha * 1.6})`;
             ctx.lineWidth = 0.6;
             ctx.stroke();
           }

@@ -1,4 +1,4 @@
-const CACHE = 'raiz-v10';
+const CACHE = 'sine-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -7,8 +7,9 @@ const ASSETS = [
   './css/app.css',
   './css/lesson.css',
   './css/challenge.css',
-  './assets/fonts/Inter.woff2',
-  './assets/fonts/SpaceGrotesk.woff2',
+  './assets/fonts/Patria.woff2',
+  './assets/fonts/NotoSans-Regular.woff2',
+  './assets/fonts/NotoSans-Bold.woff2',
   './data/curriculum.js',
   './data/primary.js',
   './data/programming.js',
@@ -22,6 +23,7 @@ const ASSETS = [
   './js/audio.js',
   './js/particles.js',
   './icons/logo.svg',
+  './icons/sine-logo.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-180.png',
